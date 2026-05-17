@@ -1,0 +1,76 @@
+{
+  "rules": {
+    ".read": "auth != null",
+    ".write": "auth != null",
+
+    "users": {
+      "$uid": {
+        ".read": "auth != null",
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'syndic')"
+      }
+    },
+
+    "notices": {
+      ".read": "auth != null",
+      "$noticeId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
+      }
+    },
+
+    "events": {
+      ".read": "auth != null",
+      "$eventId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
+      }
+    },
+
+    "spaces": {
+      ".read": "auth != null",
+      "$spaceId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
+      }
+    },
+
+    "reservations": {
+      ".read": "auth != null",
+      "$reservationId": {
+        ".write": "auth != null"
+      }
+    },
+
+    "visitors": {
+      ".read": "auth != null",
+      "$visitorId": {
+        ".write": "auth != null"
+      }
+    },
+
+    "votings": {
+      ".read": "auth != null",
+      "$votingId": {
+        ".write": "auth != null"
+      }
+    },
+
+    "logs": {
+      ".read": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'",
+      "$logId": {
+        ".write": "auth != null"
+      }
+    },
+
+    "blocks": {
+      ".read": "auth != null",
+      "$blockId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
+      }
+    },
+
+    "apartments": {
+      ".read": "auth != null",
+      "$apartmentId": {
+        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
+      }
+    }
+  }
+}

@@ -1,0 +1,79 @@
+import { ref, set, get, update, remove, push, onValue, off, DataSnapshot } from 'firebase/database';
+import { database } from '../config/firebase';
+import { UserProfile, UserRole } from '../types';
+
+// ─── List users by role ───────────────────────────────────────────────────────
+export const getUsersByRole = async (role: UserRole): Promise<UserProfile[]> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return [];
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.filter((u) => u.role === role);
+};
+
+// ─── Get single user ──────────────────────────────────────────────────────────
+export const getUserById = async (uid: string): Promise<UserProfile | null> => {
+  const snap = await get(ref(database, `users/${uid}`));
+  return snap.exists() ? (snap.val() as UserProfile) : null;
+};
+
+// ─── Create user entry (used after Firebase Auth) ────────────────────────────
+export const createUserEntry = async (profile: UserProfile): Promise<void> => {
+  await set(ref(database, `users/${profile.uid}`), profile);
+};
+
+// ─── Update user ──────────────────────────────────────────────────────────────
+export const updateUser = async (uid: string, data: Partial<UserProfile>): Promise<void> => {
+  await update(ref(database, `users/${uid}`), data);
+};
+
+// ─── Delete user entry (DB only — Auth deletion requires Admin SDK) ───────────
+export const deleteUserEntry = async (uid: string): Promise<void> => {
+  await remove(ref(database, `users/${uid}`));
+};
+
+// ─── Subscribe to users by role ───────────────────────────────────────────────
+export const subscribeToUsersByRole = (
+  role: UserRole,
+  callback: (users: UserProfile[]) => void
+) => {
+  const dbRef = ref(database, 'users');
+  const handler = (snap: DataSnapshot) => {
+    if (!snap.exists()) { callback([]); return; }
+    const all: UserProfile[] = Object.values(snap.val());
+    callback(all.filter((u) => u.role === role));
+  };
+  onValue(dbRef, handler);
+  return () => off(dbRef, 'value', handler);
+};
+
+// ─── Check if CPF is already taken ───────────────────────────────────────────
+export const isUserCPFTaken = async (cpf: string, excludeUid?: string): Promise<boolean> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return false;
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.some((u) => u.cpf === cpf && u.uid !== excludeUid);
+};
+
+// ─── Check if email is already taken ─────────────────────────────────────────
+export const isUserEmailTaken = async (email: string, excludeUid?: string): Promise<boolean> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return false;
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.some((u) => u.email.toLowerCase() === email.toLowerCase() && u.uid !== excludeUid);
+};
+
+// ─── Check if apartment already has an owner ─────────────────────────────────
+export const isApartmentTakenByOwner = async (apartmentId: string, excludeUid?: string): Promise<boolean> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return false;
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.some((u) => u.apartmentId === apartmentId && u.residentType === 'owner' && u.uid !== excludeUid);
+};
+
+// ─── Get all residents (for visitor host selection) ──────────────────────────
+export const getResidents = async (): Promise<UserProfile[]> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return [];
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.filter((u) => u.role === 'resident' && u.status === 'active');
+};

@@ -1,30 +1,64 @@
 {
   "expo": {
-    "name": "SindicoDigital",
-    "slug": "SindicoDigital",
+    "name": "Síndico Digital",
+    "slug": "sindico-digital",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#1B4F72"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.sindicodigital.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Necessário para leitura de QR Code de visitantes.",
+        "NSLocationWhenInUseUsageDescription": "Necessário para visualização do mapa do condomínio."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#1B4F72"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.sindicodigital.app",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE"
+      ]
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Necessário para leitura de QR Code de visitantes."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Necessário para visualização do mapa do condomínio."
+        }
+      ],
+      "expo-notifications"
+    ],
+    "extra": {
+      "firebaseApiKey": "FIREBASE_API_KEY",
+      "firebaseAuthDomain": "FIREBASE_AUTH_DOMAIN",
+      "firebaseDatabaseURL": "FIREBASE_DATABASE_URL",
+      "firebaseProjectId": "FIREBASE_PROJECT_ID",
+      "firebaseStorageBucket": "FIREBASE_STORAGE_BUCKET",
+      "firebaseMessagingSenderId": "FIREBASE_MESSAGING_SENDER_ID",
+      "firebaseAppId": "FIREBASE_APP_ID"
     }
   }
 }
