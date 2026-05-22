@@ -24,6 +24,7 @@ const targetLabels: Record<LogTarget, string> = {
   user:        'Usuário',
   visitor:     'Visitante',
   notice:      'Aviso',
+  event:       'Evento',
   space:       'Espaço',
   reservation: 'Reserva',
   voting:      'Votação',

@@ -28,6 +28,8 @@ import { VotingsListScreen } from '../screens/shared/votings/VotingsListScreen';
 import { CreateVotingScreen } from '../screens/shared/votings/CreateVotingScreen';
 import { ProfileScreen } from '../screens/shared/profile/ProfileScreen';
 import { AdminLogsScreen } from '../screens/syndic/AdminLogsScreen';
+import { EventsListScreen } from '../screens/shared/events/EventsListScreen';
+import { CreateEditEventScreen } from '../screens/shared/events/CreateEditEventScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -65,6 +67,10 @@ const ManagementStack = () => (
       options={{ title: 'Espaços' }} />
     <Stack.Screen name="CreateEditSpace" component={CreateEditSpaceScreen}
       options={{ title: 'Espaço' }} />
+    <Stack.Screen name="EventsList" component={EventsListScreen}
+      options={{ title: 'Eventos' }} />
+    <Stack.Screen name="CreateEditEvent" component={CreateEditEventScreen}
+      options={{ title: 'Evento' }} />
     <Stack.Screen name="BlocksList" component={BlocksListScreen}
       options={{ title: 'Blocos' }} />
     <Stack.Screen name="CreateEditBlock" component={CreateEditBlockScreen}

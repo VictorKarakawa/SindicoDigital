@@ -1,6 +1,9 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
-import { Users, Lock, Waves, ChevronRight, ClipboardList, Building2, DoorOpen } from 'lucide-react-native';
+import {
+  Users, Lock, Waves, ChevronRight, ClipboardList,
+  Building2, DoorOpen, CalendarDays,
+} from 'lucide-react-native';
 import { Colors } from '../../constants/colors';
 import { Typography, Spacing, BorderRadius } from '../../constants/typography';
 import { Card } from '../../components/common/Card';
@@ -31,7 +34,7 @@ export const ManagementScreen: React.FC<{ navigation: any }> = ({ navigation }) 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
       <Text style={styles.header}>O que você deseja gerenciar?</Text>
-      
+
       <View style={styles.optionsList}>
         <ManagementOption
           icon={Users}
@@ -47,19 +50,25 @@ export const ManagementScreen: React.FC<{ navigation: any }> = ({ navigation }) 
         />
         <ManagementOption
           icon={Waves}
-          title="Espaços Comuns"
+          title="Espaços comuns"
           description="Gerencie salões de festas, piscinas e churrasqueiras."
           onPress={() => navigation.navigate('SpacesList')}
         />
         <ManagementOption
+          icon={CalendarDays}
+          title="Eventos"
+          description="Cadastre assembleias, manutenções e comunicados com data."
+          onPress={() => navigation.navigate('EventsList')}
+        />
+        <ManagementOption
           icon={Building2}
-          title="Blocos e Torres"
+          title="Blocos e torres"
           description="Gerencie a estrutura de blocos do condomínio."
           onPress={() => navigation.navigate('BlocksList')}
         />
         <ManagementOption
           icon={DoorOpen}
-          title="Unidades e Apartamentos"
+          title="Unidades e apartamentos"
           description="Gerencie as unidades e acompanhe as ocupações."
           onPress={() => navigation.navigate('ApartmentsList')}
         />

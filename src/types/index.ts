@@ -73,7 +73,9 @@ export interface CondominiumEvent {
   date: number;
   location: string;
   createdAt: number;
+  updatedAt?: number;
   authorId: string;
+  authorName?: string;
 }
 
 // ─── Space ───────────────────────────────────────────────────────────────────
@@ -133,7 +135,7 @@ export interface Visitor {
 
 // ─── Admin Log ───────────────────────────────────────────────────────────────
 export type LogAction = 'create' | 'update' | 'delete';
-export type LogTarget = 'user' | 'visitor' | 'notice' | 'space' | 'reservation' | 'voting';
+export type LogTarget = 'user' | 'visitor' | 'notice' | 'event' | 'space' | 'reservation' | 'voting';
 
 export interface AdminLog {
   id: string;
@@ -195,7 +197,7 @@ export type ResidentTabParamList = {
   Reservations: undefined;
   Votings: undefined;
   Visitors: undefined;
-  Map: undefined;
+  More: undefined;
 };
 
 export type GatekeeperTabParamList = {

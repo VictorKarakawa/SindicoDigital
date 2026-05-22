@@ -1,10 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { Text } from 'react-native';
 import { Colors } from '../constants/colors';
 import { Typography } from '../constants/typography';
-import { Megaphone, CalendarDays, Vote, Users, User } from 'lucide-react-native';
+import { Megaphone, CalendarDays, Vote, Users, Menu } from 'lucide-react-native';
 
 import { NoticesListScreen } from '../screens/shared/notices/NoticesListScreen';
 import { ReservationsListScreen } from '../screens/shared/reservations/ReservationsListScreen';
@@ -16,6 +15,8 @@ import { VisitorDetailScreen } from '../screens/shared/visitors/VisitorDetailScr
 import { CreateEditVisitorScreen } from '../screens/shared/visitors/CreateEditVisitorScreen';
 import { CondominiumMapScreen } from '../screens/shared/map/CondominiumMapScreen';
 import { ProfileScreen } from '../screens/shared/profile/ProfileScreen';
+import { ResidentMoreScreen } from '../screens/shared/more/ResidentMoreScreen';
+import { EventsListScreen } from '../screens/shared/events/EventsListScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -49,6 +50,15 @@ const VisitorsStack = () => (
   </Stack.Navigator>
 );
 
+const MoreStack = () => (
+  <Stack.Navigator screenOptions={stackOpts}>
+    <Stack.Screen name="ResidentMoreHome" component={ResidentMoreScreen} options={{ title: 'Mais' }} />
+    <Stack.Screen name="EventsList" component={EventsListScreen} options={{ title: 'Eventos' }} />
+    <Stack.Screen name="CondominiumMap" component={CondominiumMapScreen} options={{ title: 'Mapa' }} />
+    <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Meu Perfil' }} />
+  </Stack.Navigator>
+);
+
 export const ResidentNavigator: React.FC = () => (
   <Tab.Navigator
     screenOptions={({ route }) => ({
@@ -68,23 +78,26 @@ export const ResidentNavigator: React.FC = () => (
           Reservas: CalendarDays,
           Votações: Vote,
           Visitantes: Users,
-          Perfil: User,
+          Mais: Menu,
         };
         const IconComponent = icons[route.name] || Megaphone;
         return <IconComponent size={22} color={color} />;
       },
     })}
   >
-    <Tab.Screen name="Avisos" component={NoticesListScreen}
-      options={{ headerShown: true, headerStyle: { backgroundColor: Colors.surface },
-        headerTintColor: Colors.accent, headerTitleStyle: { color: Colors.textPrimary } }} />
+    <Tab.Screen
+      name="Avisos"
+      component={NoticesListScreen}
+      options={{
+        headerShown: true,
+        headerStyle: { backgroundColor: Colors.surface },
+        headerTintColor: Colors.accent,
+        headerTitleStyle: { color: Colors.textPrimary },
+      }}
+    />
     <Tab.Screen name="Reservas" component={ReservationsStack} />
     <Tab.Screen name="Votações" component={VotingsStack} />
     <Tab.Screen name="Visitantes" component={VisitorsStack} />
-    <Tab.Screen name="Perfil" component={ProfileScreen}
-      options={{ headerShown: true, title: 'Meu Perfil',
-        headerStyle: { backgroundColor: Colors.surface },
-        headerTintColor: Colors.accent,
-        headerTitleStyle: { color: Colors.textPrimary } }} />
+    <Tab.Screen name="Mais" component={MoreStack} />
   </Tab.Navigator>
 );
