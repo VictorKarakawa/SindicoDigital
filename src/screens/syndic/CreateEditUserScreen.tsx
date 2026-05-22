@@ -1,7 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import {
   View, Text, StyleSheet, ScrollView,
-  KeyboardAvoidingView, Platform, TouchableOpacity, Modal, FlatList
+  KeyboardAvoidingView, Platform, TouchableOpacity, Modal, FlatList, Alert
 } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../../context/AuthContext';
@@ -109,18 +109,23 @@ export const CreateEditUserScreen: React.FC<{ navigation: any; route: any }> = (
     else if (!existing && password.length < 6) e.password = 'Mínimo 6 caracteres';
 
     // Async: check duplicates (only if no basic errors on the field)
-    if (!e.cpf) {
-      const taken = await isUserCPFTaken(rawCpf, existing?.uid);
-      if (taken) e.cpf = 'Este CPF já está cadastrado';
-    }
-    if (!e.email && !existing) {
-      const taken = await isUserEmailTaken(email.trim());
-      if (taken) e.email = 'Este e-mail já está cadastrado';
-    }
-    
-    if (role === 'resident' && apartmentId && residentType === 'owner') {
-      const taken = await isApartmentTakenByOwner(apartmentId, existing?.uid);
-      if (taken) e.apartmentId = 'Esta unidade já possui um proprietário registrado.';
+    try {
+      if (!e.cpf) {
+        const taken = await isUserCPFTaken(rawCpf, existing?.uid);
+        if (taken) e.cpf = 'Este CPF já está cadastrado';
+      }
+      if (!e.email && !existing) {
+        const taken = await isUserEmailTaken(email.trim());
+        if (taken) e.email = 'Este e-mail já está cadastrado';
+      }
+      
+      if (role === 'resident' && apartmentId && residentType === 'owner') {
+        const taken = await isApartmentTakenByOwner(apartmentId, existing?.uid);
+        if (taken) e.apartmentId = 'Esta unidade já possui um proprietário registrado.';
+      }
+    } catch (dbError) {
+      console.warn('Erro ao acessar o Realtime Database para validar duplicados:', dbError);
+      // We don't crash, we just let it show the warning or handle it.
     }
 
     setErrors(e);
@@ -129,14 +134,16 @@ export const CreateEditUserScreen: React.FC<{ navigation: any; route: any }> = (
 
   // ─── Save ────────────────────────────────────────────────────────────
   const handleSave = async () => {
-    const isValid = await validate();
-    if (!isValid) {
-      Toast.show({ type: 'error', text1: 'Atenção', text2: 'Corrija os erros no formulário.' });
-      return;
-    }
-
     setLoading(true);
     try {
+      const isValid = await validate();
+      if (!isValid) {
+        Toast.show({ type: 'error', text1: 'Atenção', text2: 'Corrija os erros no formulário.' });
+        Alert.alert('Atenção', 'Por favor, corrija os erros indicados no formulário.');
+        setLoading(false);
+        return;
+      }
+
       const rawCpf = cpf.replace(/\D/g, '');
       const rawPhone = phone.replace(/\D/g, '');
       const isoDate = dateInputToISO(birthDate);
@@ -190,6 +197,8 @@ export const CreateEditUserScreen: React.FC<{ navigation: any; route: any }> = (
           navigation.navigate('ResidentsList');
         } else if (role === 'gatekeeper') {
           navigation.navigate('GatekeepersList');
+        } else if (role === 'syndic') {
+          navigation.navigate('SyndicsList');
         } else {
           navigation.goBack();
         }
@@ -215,6 +224,7 @@ export const CreateEditUserScreen: React.FC<{ navigation: any; route: any }> = (
         text1: 'Falha no cadastro',
         text2: msg,
       });
+      Alert.alert('Erro ao salvar', msg);
     } finally {
       setLoading(false);
     }

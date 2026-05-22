@@ -9,6 +9,7 @@ import {
   Platform,
   Alert,
 } from 'react-native';
+import Toast from 'react-native-toast-message';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList } from '../../types';
 import { useAuth } from '../../context/AuthContext';
@@ -38,20 +39,28 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   const handleLogin = async () => {
-    if (!validate()) return;
+    if (!validate()) {
+      Alert.alert('Atenção', 'Corrija os erros no formulário antes de continuar.');
+      Toast.show({ type: 'error', text1: 'Atenção', text2: 'Corrija os erros no formulário antes de continuar.' });
+      return;
+    }
     setLoading(true);
     try {
       await signIn(email.trim(), password);
+      Toast.show({ type: 'success', text1: 'Bem-vindo(a)!', text2: 'Login efetuado com sucesso.' });
     } catch (err: any) {
       const msg =
         err.code === 'auth/invalid-credential' || err.code === 'auth/wrong-password'
           ? 'E-mail ou senha incorretos.'
           : err.code === 'auth/user-not-found'
-          ? 'Usuário não encontrado.'
+          ? (err.message || 'Usuário não encontrado.')
+          : err.code === 'auth/user-disabled'
+          ? (err.message || 'Sua conta foi desativada pela administração.')
           : err.code === 'auth/too-many-requests'
           ? 'Muitas tentativas. Tente novamente mais tarde.'
           : 'Erro ao fazer login. Verifique sua conexão.';
       Alert.alert('Erro de acesso', msg);
+      Toast.show({ type: 'error', text1: 'Erro de acesso', text2: msg });
     } finally {
       setLoading(false);
     }

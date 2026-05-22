@@ -27,15 +27,55 @@ export const VotingsListScreen: React.FC<{ navigation: any }> = ({ navigation })
 
   const handleVote = async (voting: Voting, optionId: string) => {
     if (!userProfile) return;
-    if (voting.voters?.[userProfile.uid]) {
-      Alert.alert('Atenção', 'Você já votou nesta votação.');
-      return;
-    }
     try {
       await castVote(voting.id, userProfile.uid, optionId);
-    } catch {
-      Alert.alert('Erro', 'Não foi possível registrar seu voto.');
+      Alert.alert('Sucesso', 'Seu voto foi registrado com sucesso!');
+    } catch (error: any) {
+      if (error.message === 'LIMIT_REACHED') {
+        Alert.alert('Limite atingido', 'Você já alterou seu voto o limite máximo de 3 vezes.');
+      } else if (error.message === 'VOTING_CLOSED') {
+        Alert.alert('Atenção', 'Esta votação já está encerrada.');
+      } else {
+        Alert.alert('Erro', 'Não foi possível registrar seu voto.');
+      }
     }
+  };
+
+  const handlePressOption = (item: Voting, optId: string, userVote: string | null) => {
+    if (!userProfile) return;
+    const isOpen = item.status === 'open';
+    if (!isOpen) return;
+
+    if (!userVote) {
+      // First time voting
+      handleVote(item, optId);
+      return;
+    }
+
+    if (userVote === optId) {
+      // Already voted for this option, do nothing
+      return;
+    }
+
+    // Changing vote
+    const changeCount = item.voteChanges?.[userProfile.uid] ?? 0;
+    if (changeCount >= 3) {
+      Alert.alert('Limite atingido', 'Você já alterou seu voto o limite máximo de 3 vezes.');
+      return;
+    }
+
+    const remaining = 3 - changeCount;
+    Alert.alert(
+      'Confirmar alteração',
+      `Deseja alterar seu voto para "${item.options.find(o => o.id === optId)?.label}"? Você ainda pode alterar mais ${remaining} ${remaining === 1 ? 'vez' : 'vezes'}.`,
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Confirmar',
+          onPress: () => handleVote(item, optId),
+        },
+      ]
+    );
   };
 
   const renderVoting = ({ item }: { item: Voting }) => {
@@ -63,8 +103,8 @@ export const VotingsListScreen: React.FC<{ navigation: any }> = ({ navigation })
               <TouchableOpacity
                 key={opt.id}
                 style={[styles.option, isMyVote && styles.optionVoted]}
-                onPress={() => isOpen && !userVote && handleVote(item, opt.id)}
-                activeOpacity={isOpen && !userVote ? 0.75 : 1}
+                onPress={() => handlePressOption(item, opt.id, userVote)}
+                activeOpacity={isOpen && userVote !== opt.id ? 0.75 : 1}
               >
                 <View style={styles.optionTop}>
                   <View style={{flexDirection: 'row', alignItems: 'center', gap: 4}}>
@@ -82,7 +122,14 @@ export const VotingsListScreen: React.FC<{ navigation: any }> = ({ navigation })
           })}
         </View>
 
-        <Text style={styles.totalVotes}>Total: {totalVotes} votos</Text>
+        <View style={styles.footerRow}>
+          {userProfile && userVote && (
+            <Text style={styles.changesCount}>
+              Alterações: {item.voteChanges?.[userProfile.uid] ?? 0}/3
+            </Text>
+          )}
+          <Text style={styles.totalVotes}>Total: {totalVotes} votos</Text>
+        </View>
 
         {isSyndic && (
           <View style={styles.actions}>
@@ -144,6 +191,16 @@ const styles = StyleSheet.create({
   progressBar: { height: 6, backgroundColor: Colors.accent, borderRadius: BorderRadius.full },
   optionVotes: { color: Colors.textMuted, fontSize: Typography.xs, marginTop: 4 },
   totalVotes: { color: Colors.textMuted, fontSize: Typography.sm, textAlign: 'right' },
+  footerRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: Spacing.xs,
+  },
+  changesCount: {
+    color: Colors.textMuted,
+    fontSize: Typography.sm,
+  },
   actions: { flexDirection: 'row', gap: Spacing.sm, marginTop: Spacing.sm },
   fab: {
     position: 'absolute', bottom: 24, right: 24,

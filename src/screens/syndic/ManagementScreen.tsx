@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import {
   Users, Lock, Waves, ChevronRight, ClipboardList,
-  Building2, DoorOpen, CalendarDays,
+  Building2, DoorOpen, CalendarDays, ShieldPlus,
 } from 'lucide-react-native';
 import { Colors } from '../../constants/colors';
 import { Typography, Spacing, BorderRadius } from '../../constants/typography';
@@ -36,6 +36,12 @@ export const ManagementScreen: React.FC<{ navigation: any }> = ({ navigation }) 
       <Text style={styles.header}>O que você deseja gerenciar?</Text>
 
       <View style={styles.optionsList}>
+        <ManagementOption
+          icon={ShieldPlus}
+          title="Síndicos"
+          description="Gerencie os síndicos e administradores do condomínio."
+          onPress={() => navigation.navigate('SyndicsList', { role: 'syndic' })}
+        />
         <ManagementOption
           icon={Users}
           title="Moradores"

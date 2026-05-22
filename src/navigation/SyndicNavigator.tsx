@@ -56,6 +56,9 @@ const ManagementStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
     <Stack.Screen name="ManagementMenu" component={ManagementScreen}
       options={{ title: 'Gestão' }} />
+    <Stack.Screen name="SyndicsList" component={UsersListScreen}
+      options={{ title: 'Síndicos' }}
+      initialParams={{ role: 'syndic' }} />
     <Stack.Screen name="ResidentsList" component={UsersListScreen}
       options={{ title: 'Moradores' }}
       initialParams={{ role: 'resident' }} />

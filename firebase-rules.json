@@ -6,7 +6,7 @@
     "users": {
       "$uid": {
         ".read": "auth != null",
-        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'syndic')"
+        ".write": "auth != null && (auth.uid === $uid || root.child('users').child(auth.uid).child('role').val() === 'syndic') || (!data.exists())"
       }
     },
 
@@ -41,7 +41,7 @@
     "visitors": {
       ".read": "auth != null",
       "$visitorId": {
-        ".write": "auth != null"
+        ".write": "auth != null && (root.child('users').child(auth.uid).child('role').val() === 'syndic' || root.child('users').child(auth.uid).child('role').val() === 'gatekeeper')"
       }
     },
 
@@ -60,16 +60,16 @@
     },
 
     "blocks": {
-      ".read": "auth != null",
+      ".read": true,
       "$blockId": {
         ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
       }
     },
 
     "apartments": {
-      ".read": "auth != null",
+      ".read": true,
       "$apartmentId": {
-        ".write": "auth != null && root.child('users').child(auth.uid).child('role').val() === 'syndic'"
+        ".write": "auth != null"
       }
     }
   }

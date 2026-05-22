@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { User, onAuthStateChanged } from 'firebase/auth';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { auth } from '../config/firebase';
@@ -24,7 +24,7 @@ interface AuthContextType {
     password: string,
     name: string,
     role: UserRole,
-    extra?: { apartment?: string; block?: string; phone?: string }
+    extra?: { apartment?: string; block?: string; phone?: string; apartmentId?: string; cpf?: string; rg?: string }
   ) => Promise<void>;
   signOut: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
@@ -39,22 +39,39 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<User | null>(null);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
+  const isRegistering = useRef(false);
 
   const loadProfile = useCallback(async (firebaseUser: User) => {
     try {
       // Try cache first for faster startup
       const cached = await AsyncStorage.getItem(PROFILE_CACHE_KEY);
-      if (cached) setUserProfile(JSON.parse(cached));
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed.status === 'inactive') {
+          await logoutService();
+          setUserProfile(null);
+          await AsyncStorage.removeItem(PROFILE_CACHE_KEY);
+          return;
+        }
+        setUserProfile(parsed);
+      }
 
       // Fetch fresh from Firebase
       const profile = await fetchUserProfile(firebaseUser.uid);
-      if (profile) {
-        setUserProfile(profile);
-        await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
-
-        // Register push token
-        await registerForPushNotifications(firebaseUser.uid).catch(() => null);
+      if (!profile || profile.status === 'inactive') {
+        // During registration, profile may not exist yet — don't log out
+        if (isRegistering.current) return;
+        await logoutService();
+        setUserProfile(null);
+        await AsyncStorage.removeItem(PROFILE_CACHE_KEY);
+        return;
       }
+
+      setUserProfile(profile);
+      await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+
+      // Register push token
+      await registerForPushNotifications(firebaseUser.uid).catch(() => null);
     } catch (e) {
       console.warn('Error loading user profile:', e);
     }
@@ -75,8 +92,16 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [loadProfile]);
 
   const signIn = async (email: string, password: string) => {
-    await loginWithEmail(email, password);
-    // onAuthStateChanged handles the rest
+    const firebaseUser = await loginWithEmail(email, password);
+    const profile = await fetchUserProfile(firebaseUser.uid);
+    if (!profile) {
+      await logoutService();
+      throw { code: 'auth/user-not-found', message: 'Usuário não cadastrado ou removido do sistema.' };
+    }
+    if (profile.status === 'inactive') {
+      await logoutService();
+      throw { code: 'auth/user-disabled', message: 'Sua conta foi desativada pela administração.' };
+    }
   };
 
   const signUp = async (
@@ -84,9 +109,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     password: string,
     name: string,
     role: UserRole,
-    extra?: { apartment?: string; block?: string; phone?: string }
+    extra?: { apartment?: string; block?: string; phone?: string; apartmentId?: string; cpf?: string; rg?: string }
   ) => {
-    await registerUser(email, password, name, role, extra);
+    // Use a ref flag to prevent onAuthStateChanged from logging out before the profile is saved
+    isRegistering.current = true;
+    try {
+      await registerUser(email, password, name, role, extra);
+      // Now sign in the new user on the primary auth so they are authenticated
+      const firebaseUser = await loginWithEmail(email, password);
+      // Load the profile (it should exist now)
+      const profile = await fetchUserProfile(firebaseUser.uid);
+      if (profile) {
+        setUserProfile(profile);
+        await AsyncStorage.setItem(PROFILE_CACHE_KEY, JSON.stringify(profile));
+      }
+    } finally {
+      isRegistering.current = false;
+    }
   };
 
   const signOut = async () => {

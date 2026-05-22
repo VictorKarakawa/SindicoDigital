@@ -59,8 +59,6 @@ export const registerUser = async (
     cpf: extra?.cpf ?? '',
     rg: extra?.rg ?? '',
     birthDate: extra?.birthDate ?? '',
-    residentType: extra?.residentType,
-    apartmentId: extra?.apartmentId,
     apartment: extra?.apartment ?? '',
     block: extra?.block ?? '',
     phone: extra?.phone ?? '',
@@ -68,6 +66,13 @@ export const registerUser = async (
     status: 'active',
     createdAt: Date.now(),
   };
+
+  if (extra?.residentType !== undefined) {
+    profile.residentType = extra.residentType;
+  }
+  if (extra?.apartmentId !== undefined) {
+    profile.apartmentId = extra.apartmentId;
+  }
 
   await set(ref(database, `users/${user.uid}`), profile);
   return user;

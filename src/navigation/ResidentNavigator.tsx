@@ -3,16 +3,13 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { Colors } from '../constants/colors';
 import { Typography } from '../constants/typography';
-import { Megaphone, CalendarDays, Vote, Users, Menu } from 'lucide-react-native';
+import { Megaphone, CalendarDays, Vote, Menu } from 'lucide-react-native';
 
 import { NoticesListScreen } from '../screens/shared/notices/NoticesListScreen';
 import { ReservationsListScreen } from '../screens/shared/reservations/ReservationsListScreen';
 import { CreateReservationScreen } from '../screens/shared/reservations/CreateReservationScreen';
 import { VotingsListScreen } from '../screens/shared/votings/VotingsListScreen';
 import { CreateVotingScreen } from '../screens/shared/votings/CreateVotingScreen';
-import { VisitorsListScreen } from '../screens/shared/visitors/VisitorsListScreen';
-import { VisitorDetailScreen } from '../screens/shared/visitors/VisitorDetailScreen';
-import { CreateEditVisitorScreen } from '../screens/shared/visitors/CreateEditVisitorScreen';
 import { CondominiumMapScreen } from '../screens/shared/map/CondominiumMapScreen';
 import { ProfileScreen } from '../screens/shared/profile/ProfileScreen';
 import { ResidentMoreScreen } from '../screens/shared/more/ResidentMoreScreen';
@@ -39,14 +36,6 @@ const VotingsStack = () => (
   <Stack.Navigator screenOptions={stackOpts}>
     <Stack.Screen name="VotingsList" component={VotingsListScreen} options={{ title: 'Votações' }} />
     <Stack.Screen name="CreateVoting" component={CreateVotingScreen} options={{ title: 'Nova Votação' }} />
-  </Stack.Navigator>
-);
-
-const VisitorsStack = () => (
-  <Stack.Navigator screenOptions={stackOpts}>
-    <Stack.Screen name="VisitorsList" component={VisitorsListScreen} options={{ title: 'Visitantes' }} />
-    <Stack.Screen name="VisitorDetail" component={VisitorDetailScreen} options={{ title: 'Visitante' }} />
-    <Stack.Screen name="CreateEditVisitor" component={CreateEditVisitorScreen} options={{ title: 'Visitante' }} />
   </Stack.Navigator>
 );
 
@@ -77,7 +66,6 @@ export const ResidentNavigator: React.FC = () => (
           Avisos: Megaphone,
           Reservas: CalendarDays,
           Votações: Vote,
-          Visitantes: Users,
           Mais: Menu,
         };
         const IconComponent = icons[route.name] || Megaphone;
@@ -97,7 +85,6 @@ export const ResidentNavigator: React.FC = () => (
     />
     <Tab.Screen name="Reservas" component={ReservationsStack} />
     <Tab.Screen name="Votações" component={VotingsStack} />
-    <Tab.Screen name="Visitantes" component={VisitorsStack} />
     <Tab.Screen name="Mais" component={MoreStack} />
   </Tab.Navigator>
 );

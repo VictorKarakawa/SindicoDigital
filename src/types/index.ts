@@ -164,6 +164,7 @@ export interface Voting {
   description: string;
   options: VotingOption[];
   voters: Record<string, string>; // uid → optionId
+  voteChanges?: Record<string, number>; // uid → count of changes
   status: VotingStatus;
   authorId: string;
   createdAt: number;

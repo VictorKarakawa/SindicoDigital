@@ -30,17 +30,48 @@ export const castVote = async (
 ): Promise<{ committed: boolean }> => {
   // Use transaction to ensure atomic, race-condition-safe vote counting
   const votingRef = ref(database, `${PATH}/${votingId}`);
-  return runTransaction(votingRef, (current: Voting | null) => {
+  const result = await runTransaction(votingRef, (current: Voting | null) => {
     if (!current) return current;          // Node missing — abort
-    if (current.voters?.[userId]) return;  // Already voted — abort (return undefined)
-    if (current.status !== 'open') return; // Voting closed — abort
+    if (current.status !== 'open') {
+      throw new Error('VOTING_CLOSED');
+    }
 
-    const voters = { ...(current.voters ?? {}), [userId]: optionId };
-    const options = (current.options ?? []).map((opt: VotingOption) =>
-      opt.id === optionId ? { ...opt, votes: (opt.votes ?? 0) + 1 } : opt
-    );
-    return { ...current, voters, options };
+    const previousOptionId = current.voters?.[userId];
+    if (previousOptionId === optionId) {
+      // Trying to vote for the same option - abort transaction
+      return;
+    }
+
+    if (previousOptionId) {
+      // Changing vote: check if limit is reached
+      const changes = current.voteChanges?.[userId] ?? 0;
+      if (changes >= 3) {
+        throw new Error('LIMIT_REACHED');
+      }
+
+      const voters = { ...(current.voters ?? {}), [userId]: optionId };
+      const voteChanges = { ...(current.voteChanges ?? {}), [userId]: changes + 1 };
+      const options = (current.options ?? []).map((opt: VotingOption) => {
+        if (opt.id === previousOptionId) {
+          return { ...opt, votes: Math.max(0, (opt.votes ?? 0) - 1) };
+        }
+        if (opt.id === optionId) {
+          return { ...opt, votes: (opt.votes ?? 0) + 1 };
+        }
+        return opt;
+      });
+      return { ...current, voters, voteChanges, options };
+    } else {
+      // First time voting
+      const voters = { ...(current.voters ?? {}), [userId]: optionId };
+      const options = (current.options ?? []).map((opt: VotingOption) =>
+        opt.id === optionId ? { ...opt, votes: (opt.votes ?? 0) + 1 } : opt
+      );
+      return { ...current, voters, options };
+    }
   });
+
+  return { committed: result.committed };
 };
 
 export const getVotings = async (): Promise<Voting[]> => {
