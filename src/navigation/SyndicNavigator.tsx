@@ -22,8 +22,10 @@ import { CreateEditApartmentScreen } from '../screens/syndic/structure/CreateEdi
 import { ReservationsListScreen } from '../screens/shared/reservations/ReservationsListScreen';
 import { CreateReservationScreen } from '../screens/shared/reservations/CreateReservationScreen';
 import { VisitorsListScreen } from '../screens/shared/visitors/VisitorsListScreen';
+import { VisitsListScreen } from '../screens/shared/visitors/VisitsListScreen';
 import { VisitorDetailScreen } from '../screens/shared/visitors/VisitorDetailScreen';
 import { CreateEditVisitorScreen } from '../screens/shared/visitors/CreateEditVisitorScreen';
+import { CreateVisitScreen } from '../screens/shared/visitors/CreateVisitScreen';
 import { VotingsListScreen } from '../screens/shared/votings/VotingsListScreen';
 import { CreateVotingScreen } from '../screens/shared/votings/CreateVotingScreen';
 import { ProfileScreen } from '../screens/shared/profile/ProfileScreen';
@@ -100,10 +102,14 @@ const VisitorsStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
     <Stack.Screen name="VisitorsList" component={VisitorsListScreen}
       options={{ title: 'Visitantes' }} />
+    <Stack.Screen name="VisitsList" component={VisitsListScreen}
+      options={{ title: 'Visitas' }} />
     <Stack.Screen name="VisitorDetail" component={VisitorDetailScreen}
       options={{ title: 'Visitante' }} />
     <Stack.Screen name="CreateEditVisitor" component={CreateEditVisitorScreen}
       options={{ title: 'Visitante' }} />
+    <Stack.Screen name="CreateVisit" component={CreateVisitScreen}
+      options={{ title: 'Nova Visita' }} />
   </Stack.Navigator>
 );
 

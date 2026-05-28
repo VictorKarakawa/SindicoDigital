@@ -12,6 +12,7 @@ type MoreStackParamList = {
   EventsList: undefined;
   CondominiumMap: undefined;
   Profile: undefined;
+  VisitorsList: undefined;
 };
 
 type Navigation = NativeStackNavigationProp<MoreStackParamList>;
@@ -22,6 +23,12 @@ const ITEMS = [
     description: 'Acompanhe assembleias, manutenções e atividades agendadas.',
     icon: CalendarDays,
     route: 'EventsList' as const,
+  },
+  {
+    title: 'Visitantes',
+    description: 'Gerencie seus visitantes e agende novas visitas.',
+    icon: User,
+    route: 'VisitorsList' as const,
   },
   {
     title: 'Mapa do condomínio',

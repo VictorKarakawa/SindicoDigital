@@ -43,26 +43,6 @@ export const subscribeToVisitors = (callback: (visitors: Visitor[]) => void) => 
   return () => off(dbRef, 'value', handler);
 };
 
-export const checkinVisitor = async (id: string): Promise<void> => {
-  await update(ref(database, `${PATH}/${id}`), {
-    status: 'checked_in',
-    checkinAt: Date.now(),
-  });
-};
-
-export const checkoutVisitor = async (id: string): Promise<void> => {
-  await update(ref(database, `${PATH}/${id}`), {
-    status: 'checked_out',
-    checkoutAt: Date.now(),
-  });
-};
-
-export const approveVisitor = async (id: string): Promise<void> => {
-  await update(ref(database, `${PATH}/${id}`), {
-    status: 'approved',
-  });
-};
-
 // ─── Search visitors locally ─────────────────────────────────────────────────
 export const searchVisitors = (query: string, visitors: Visitor[]): Visitor[] => {
   if (!query.trim()) return visitors;
@@ -77,15 +57,10 @@ export const searchVisitors = (query: string, visitors: Visitor[]): Visitor[] =>
   });
 };
 
-// ─── Check if a visitor with this CPF already has an active visit ────────────
-export const isVisitorCPFActive = async (cpf: string, excludeId?: string): Promise<boolean> => {
+export const getVisitorByCpf = async (cpf: string): Promise<Visitor | null> => {
   const snap = await get(ref(database, PATH));
-  if (!snap.exists()) return false;
+  if (!snap.exists()) return null;
   const all = Object.values(snap.val() as Record<string, Visitor>);
-  return all.some(
-    (v) =>
-      v.cpf === cpf &&
-      v.id !== excludeId &&
-      (v.status === 'pending' || v.status === 'approved' || v.status === 'checked_in')
-  );
+  const cleanCpf = cpf.replace(/\D/g, '');
+  return all.find(v => v.cpf.replace(/\D/g, '') === cleanCpf) || null;
 };

@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, Alert, TouchableOpacity } from 'react-native';
 import { CameraView, useCameraPermissions } from 'expo-camera';
-import { getVisitors, checkinVisitor, checkoutVisitor } from '../../services/visitors.service';
+import { getVisits, checkinVisit, checkoutVisit } from '../../services/visits.service';
 import { Colors } from '../../constants/colors';
 import { Typography, Spacing, BorderRadius } from '../../constants/typography';
-import { Camera as CameraIcon, RefreshCcw, Info, Ban, LogOut, PersonStanding, CheckCircle2 } from 'lucide-react-native';
+import { Camera as CameraIcon, RefreshCcw } from 'lucide-react-native';
 import { Button } from '../../components/common/Button';
 
 export const ScanQRScreen: React.FC = () => {
@@ -18,41 +18,41 @@ export const ScanQRScreen: React.FC = () => {
     setProcessing(true);
 
     try {
-      const visitors = await getVisitors();
-      const visitor = visitors.find((v) => v.qrCode === data);
+      const visits = await getVisits();
+      const visit = visits.find((v) => v.qrCode === data);
 
-      if (!visitor) {
-        Alert.alert('Não encontrado', 'QR Code inválido ou visitante não cadastrado.', [
+      if (!visit) {
+        Alert.alert('Não encontrado', 'QR Code inválido ou visita não cadastrada.', [
           { text: 'Tentar novamente', onPress: () => setScanned(false) },
         ]);
         return;
       }
 
-      if (visitor.status === 'pending') {
+      if (visit.status === 'pending') {
         Alert.alert(
           'Visitante encontrado',
-          `Nome: ${visitor.name}\nAnfitrião: ${visitor.hostName ?? '—'}\n\nRegistrar entrada?`,
+          `Nome: ${visit.visitorName}\nAnfitrião: ${visit.hostName ?? '—'}\n\nRegistrar entrada?`,
           [
             { text: 'Cancelar', style: 'cancel', onPress: () => setScanned(false) },
             {
               text: 'Confirmar entrada', onPress: async () => {
-                await checkinVisitor(visitor.id);
-                Alert.alert('Check-in', `${visitor.name} entrou no condomínio.`);
+                await checkinVisit(visit.id);
+                Alert.alert('Check-in', `${visit.visitorName} entrou no condomínio.`);
                 setScanned(false);
               },
             },
           ]
         );
-      } else if (visitor.status === 'checked_in') {
+      } else if (visit.status === 'checked_in') {
         Alert.alert(
           'Visitante no condomínio',
-          `Nome: ${visitor.name}\nAnfitrião: ${visitor.hostName ?? '—'}\n\nRegistrar saída?`,
+          `Nome: ${visit.visitorName}\nAnfitrião: ${visit.hostName ?? '—'}\n\nRegistrar saída?`,
           [
             { text: 'Cancelar', style: 'cancel', onPress: () => setScanned(false) },
             {
               text: 'Confirmar saída', onPress: async () => {
-                await checkoutVisitor(visitor.id);
-                Alert.alert('Check-out', `${visitor.name} saiu do condomínio.`);
+                await checkoutVisit(visit.id);
+                Alert.alert('Check-out', `${visit.visitorName} saiu do condomínio.`);
                 setScanned(false);
               },
             },
@@ -60,8 +60,8 @@ export const ScanQRScreen: React.FC = () => {
         );
       } else {
         Alert.alert(
-          'Status do visitante',
-          `Nome: ${visitor.name}\nStatus: ${visitor.status}`,
+          'Status da visita',
+          `Nome: ${visit.visitorName}\nStatus: ${visit.status}`,
           [{ text: 'OK', onPress: () => setScanned(false) }]
         );
       }

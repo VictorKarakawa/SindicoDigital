@@ -8,8 +8,10 @@ import { Camera, Users, Home } from 'lucide-react-native';
 
 import { ScanQRScreen } from '../screens/gatekeeper/ScanQRScreen';
 import { VisitorsListScreen } from '../screens/shared/visitors/VisitorsListScreen';
+import { VisitsListScreen } from '../screens/shared/visitors/VisitsListScreen';
 import { VisitorDetailScreen } from '../screens/shared/visitors/VisitorDetailScreen';
 import { CreateEditVisitorScreen } from '../screens/shared/visitors/CreateEditVisitorScreen';
+import { CreateVisitScreen } from '../screens/shared/visitors/CreateVisitScreen';
 import { UsersListScreen } from '../screens/syndic/UsersListScreen';
 
 const Tab = createBottomTabNavigator();
@@ -24,9 +26,11 @@ const stackOpts = {
 
 const VisitorsStack = () => (
   <Stack.Navigator screenOptions={stackOpts}>
-    <Stack.Screen name="VisitorsList" component={VisitorsListScreen} options={{ title: 'Visitantes' }} />
-    <Stack.Screen name="VisitorDetail" component={VisitorDetailScreen} options={{ title: 'Detalhe' }} />
-    <Stack.Screen name="CreateEditVisitor" component={CreateEditVisitorScreen} options={{ title: 'Visitante' }} />
+    <Stack.Screen name="VisitsList" component={VisitsListScreen} options={{ title: 'Visitas Ativas' }} />
+    <Stack.Screen name="VisitorsList" component={VisitorsListScreen} options={{ title: 'Visitantes Cadastrados' }} />
+    <Stack.Screen name="VisitorDetail" component={VisitorDetailScreen} options={{ title: 'Detalhe do Visitante' }} />
+    <Stack.Screen name="CreateEditVisitor" component={CreateEditVisitorScreen} options={{ title: 'Perfil Visitante' }} />
+    <Stack.Screen name="CreateVisit" component={CreateVisitScreen} options={{ title: 'Nova Visita' }} />
   </Stack.Navigator>
 );
 

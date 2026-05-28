@@ -106,10 +106,7 @@ export interface Reservation {
   createdAt: number;
 }
 
-// ─── Visitor ─────────────────────────────────────────────────────────────────
-export type VisitorType = 'family' | 'service' | 'delivery' | 'common';
-export type VisitorStatus = 'pending' | 'approved' | 'checked_in' | 'checked_out' | 'denied';
-
+// ─── Visitor (Profile) ───────────────────────────────────────────────────────
 export interface Visitor {
   id: string;
   name: string;
@@ -118,14 +115,30 @@ export interface Visitor {
   phone?: string;
   email?: string;
   photoURL?: string;
+  createdAt: number;
+}
+
+// ─── Visit (Movement) ────────────────────────────────────────────────────────
+export type VisitorType = 'family' | 'service' | 'delivery' | 'common';
+export type VisitorStatus = 'pending' | 'approved' | 'checked_in' | 'checked_out' | 'denied';
+
+export interface Visit {
+  id: string;
+  visitorId: string;
+  visitorName?: string;
+  visitorCpf?: string;
+  visitorPhotoURL?: string;
+  
   hostUserId: string;
   hostName?: string;
   hostApartment?: string;
   hostBlock?: string;
+  
   expectedDate: string; // YYYY-MM-DD
   expectedTime?: string; // HH:mm
   visitorType: VisitorType;
   observations?: string;
+  
   status: VisitorStatus;
   qrCode: string;
   checkinAt?: number;

@@ -14,6 +14,10 @@ import { CondominiumMapScreen } from '../screens/shared/map/CondominiumMapScreen
 import { ProfileScreen } from '../screens/shared/profile/ProfileScreen';
 import { ResidentMoreScreen } from '../screens/shared/more/ResidentMoreScreen';
 import { EventsListScreen } from '../screens/shared/events/EventsListScreen';
+import { VisitorsListScreen } from '../screens/shared/visitors/VisitorsListScreen';
+import { VisitorDetailScreen } from '../screens/shared/visitors/VisitorDetailScreen';
+import { CreateEditVisitorScreen } from '../screens/shared/visitors/CreateEditVisitorScreen';
+import { CreateVisitScreen } from '../screens/shared/visitors/CreateVisitScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createNativeStackNavigator();
@@ -45,6 +49,10 @@ const MoreStack = () => (
     <Stack.Screen name="EventsList" component={EventsListScreen} options={{ title: 'Eventos' }} />
     <Stack.Screen name="CondominiumMap" component={CondominiumMapScreen} options={{ title: 'Mapa' }} />
     <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Meu Perfil' }} />
+    <Stack.Screen name="VisitorsList" component={VisitorsListScreen} options={{ title: 'Meus Visitantes' }} />
+    <Stack.Screen name="VisitorDetail" component={VisitorDetailScreen} options={{ title: 'Visitante' }} />
+    <Stack.Screen name="CreateEditVisitor" component={CreateEditVisitorScreen} options={{ title: 'Visitante' }} />
+    <Stack.Screen name="CreateVisit" component={CreateVisitScreen} options={{ title: 'Nova Visita' }} />
   </Stack.Navigator>
 );
 
