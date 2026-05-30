@@ -7,7 +7,7 @@ import { Input } from '../../../components/common/Input';
 import { Button } from '../../../components/common/Button';
 import { Colors } from '../../../constants/colors';
 import { Typography, Spacing, BorderRadius } from '../../../constants/typography';
-import { DoorOpen, Building2, LayoutList, AlignLeft } from 'lucide-react-native';
+import { DoorOpen, Building2, LayoutList, AlignLeft, Users } from 'lucide-react-native';
 import { ApartmentTypeLabels, ApartmentStatusLabels } from '../../../constants/roles';
 
 export const CreateEditApartmentScreen: React.FC<{ navigation: any; route: any }> = ({
@@ -21,6 +21,7 @@ export const CreateEditApartmentScreen: React.FC<{ navigation: any; route: any }
   const [status, setStatus] = useState<ApartmentStatus>(existing?.status ?? 'available');
   const [floor, setFloor] = useState(existing?.floor ?? '');
   const [observations, setObservations] = useState(existing?.observations ?? '');
+  const [maxResidents, setMaxResidents] = useState(existing?.maxResidents?.toString() ?? '');
   
   const [blocks, setBlocks] = useState<Block[]>([]);
   const [loadingBlocks, setLoadingBlocks] = useState(true);
@@ -52,6 +53,7 @@ export const CreateEditApartmentScreen: React.FC<{ navigation: any; route: any }
           status,
           floor: floor.trim(),
           observations: observations.trim(),
+          maxResidents: maxResidents.trim() ? parseInt(maxResidents.trim(), 10) : undefined,
         });
         Toast.show({ type: 'success', text1: 'Atualizado', text2: 'Unidade atualizada com sucesso.' });
       } else {
@@ -63,6 +65,7 @@ export const CreateEditApartmentScreen: React.FC<{ navigation: any; route: any }
           status,
           floor: floor.trim(),
           observations: observations.trim(),
+          maxResidents: maxResidents.trim() ? parseInt(maxResidents.trim(), 10) : undefined,
           createdAt: Date.now(),
         });
         Toast.show({ type: 'success', text1: 'Cadastrado', text2: 'Unidade criada com sucesso.' });
@@ -161,6 +164,15 @@ export const CreateEditApartmentScreen: React.FC<{ navigation: any; route: any }
           onChangeText={setFloor}
           placeholder="Ex: 1º Andar, Térreo"
           leftIcon={<LayoutList size={20} color={Colors.textSecondary} />}
+        />
+        
+        <Input
+          label="Limite de moradores (Opcional)"
+          value={maxResidents}
+          onChangeText={setMaxResidents}
+          keyboardType="numeric"
+          placeholder="Ex: 4"
+          leftIcon={<Users size={20} color={Colors.textSecondary} />}
         />
         
         <Input

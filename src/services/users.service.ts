@@ -77,3 +77,32 @@ export const getResidents = async (): Promise<UserProfile[]> => {
   const all: UserProfile[] = Object.values(snap.val());
   return all.filter((u) => u.role === 'resident' && u.status === 'active');
 };
+
+// ─── Count residents in an apartment ─────────────────────────────────────────
+export const countResidentsInApartment = async (apartmentId: string): Promise<number> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return 0;
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.filter((u) => u.apartmentId === apartmentId && u.role === 'resident' && u.status !== 'rejected').length;
+};
+
+// ─── Get pending users ────────────────────────────────────────────────────────
+export const getPendingUsers = async (): Promise<UserProfile[]> => {
+  const snap = await get(ref(database, 'users'));
+  if (!snap.exists()) return [];
+  const all: UserProfile[] = Object.values(snap.val());
+  return all.filter((u) => u.status === 'pending');
+};
+
+// ─── Approve User ─────────────────────────────────────────────────────────────
+export const approveUser = async (uid: string, apartmentId?: string): Promise<void> => {
+  await update(ref(database, `users/${uid}`), { status: 'active', rejectionReason: null });
+  if (apartmentId) {
+    await update(ref(database, `apartments/${apartmentId}`), { status: 'occupied' });
+  }
+};
+
+// ─── Reject User ──────────────────────────────────────────────────────────────
+export const rejectUser = async (uid: string, reason: string): Promise<void> => {
+  await update(ref(database, `users/${uid}`), { status: 'rejected', rejectionReason: reason });
+};

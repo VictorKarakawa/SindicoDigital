@@ -13,6 +13,7 @@ import { CreateEditNoticeScreen } from '../screens/shared/notices/CreateEditNoti
 import { UsersListScreen } from '../screens/syndic/UsersListScreen';
 import { CreateEditUserScreen } from '../screens/syndic/CreateEditUserScreen';
 import { ManagementScreen } from '../screens/syndic/ManagementScreen';
+import { PendingApprovalsScreen } from '../screens/syndic/PendingApprovalsScreen';
 import { SpacesListScreen } from '../screens/shared/spaces/SpacesListScreen';
 import { CreateEditSpaceScreen } from '../screens/shared/spaces/CreateEditSpaceScreen';
 import { BlocksListScreen } from '../screens/syndic/structure/BlocksListScreen';
@@ -58,6 +59,8 @@ const ManagementStack = () => (
   <Stack.Navigator screenOptions={stackScreenOptions}>
     <Stack.Screen name="ManagementMenu" component={ManagementScreen}
       options={{ title: 'Gestão' }} />
+    <Stack.Screen name="PendingApprovals" component={PendingApprovalsScreen}
+      options={{ title: 'Aprovações Pendentes' }} />
     <Stack.Screen name="SyndicsList" component={UsersListScreen}
       options={{ title: 'Síndicos' }}
       initialParams={{ role: 'syndic' }} />

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import {
   Users, Lock, Waves, ChevronRight, ClipboardList,
-  Building2, DoorOpen, CalendarDays, ShieldPlus,
+  Building2, DoorOpen, CalendarDays, ShieldPlus, UserCheck
 } from 'lucide-react-native';
 import { Colors } from '../../constants/colors';
 import { Typography, Spacing, BorderRadius } from '../../constants/typography';
@@ -36,6 +36,12 @@ export const ManagementScreen: React.FC<{ navigation: any }> = ({ navigation }) 
       <Text style={styles.header}>O que você deseja gerenciar?</Text>
 
       <View style={styles.optionsList}>
+        <ManagementOption
+          icon={UserCheck}
+          title="Aprovações Pendentes"
+          description="Aprove ou rejeite novos cadastros de moradores."
+          onPress={() => navigation.navigate('PendingApprovals')}
+        />
         <ManagementOption
           icon={ShieldPlus}
           title="Síndicos"

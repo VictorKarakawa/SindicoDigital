@@ -50,6 +50,8 @@ export const VisitorTypeLabels: Record<string, string> = {
 export const UserStatusLabels: Record<string, string> = {
   active: 'Ativo',
   inactive: 'Inativo',
+  pending: 'Pendente',
+  rejected: 'Rejeitado',
 };
 
 export const ApartmentTypeLabels: Record<string, string> = {

@@ -2,7 +2,7 @@
 export type UserRole = 'syndic' | 'resident' | 'gatekeeper';
 
 // ─── User Status ────────────────────────────────────────────────────────────
-export type UserStatus = 'active' | 'inactive';
+export type UserStatus = 'active' | 'inactive' | 'pending' | 'rejected';
 
 // ─── Resident Type ──────────────────────────────────────────────────────────
 export type ResidentType = 'owner' | 'tenant';
@@ -23,6 +23,7 @@ export interface UserProfile {
   phone?: string;
   photoURL?: string;
   status: UserStatus;
+  rejectionReason?: string;
   condominiumId?: string;
   pushToken?: string;
   createdAt: number;
@@ -48,6 +49,7 @@ export interface Apartment {
   status: ApartmentStatus;
   floor?: string;
   observations?: string;
+  maxResidents?: number;
   createdAt: number;
 }
 

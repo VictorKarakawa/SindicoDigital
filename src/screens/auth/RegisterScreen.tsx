@@ -16,6 +16,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { AuthStackParamList, UserRole, Apartment } from '../../types';
 import { useAuth } from '../../context/AuthContext';
 import { subscribeToApartments, updateApartmentOccupancy } from '../../services/structure.service';
+import { countResidentsInApartment } from '../../services/users.service';
 import { Input } from '../../components/common/Input';
 import { Button } from '../../components/common/Button';
 import { Colors } from '../../constants/colors';
@@ -85,6 +86,7 @@ export const RegisterScreen: React.FC<Props> = ({ navigation }) => {
     setLoading(true);
     try {
       const selected = apartments.find(a => a.id === apartmentId);
+
       await signUp(email.trim(), password, name.trim(), 'resident', {
         apartmentId: apartmentId,
         apartment: selected?.number ?? '',
@@ -92,12 +94,10 @@ export const RegisterScreen: React.FC<Props> = ({ navigation }) => {
         phone: phone.trim(),
         cpf: cpf.replace(/\D/g, ''),
         rg: rg.trim(),
+        status: 'pending',
       });
-      if (apartmentId) {
-        await updateApartmentOccupancy(apartmentId, 'occupied');
-      }
-      Alert.alert('Sucesso!', 'Cadastro realizado com sucesso.');
-      Toast.show({ type: 'success', text1: 'Sucesso!', text2: 'Cadastro realizado com sucesso.' });
+      Alert.alert('Sucesso!', 'Seu cadastro foi realizado. Você poderá acessar após aprovação do síndico.');
+      Toast.show({ type: 'success', text1: 'Sucesso!', text2: 'Cadastro aguardando aprovação.' });
     } catch (err: any) {
       const msg =
         err.code === 'auth/email-already-in-use'

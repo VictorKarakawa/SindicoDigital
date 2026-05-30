@@ -34,6 +34,7 @@ export const registerUser = async (
     birthDate?: string;
     residentType?: ResidentType;
     photoURL?: string;
+    status?: UserStatus;
   }
 ): Promise<User> => {
   // Use a secondary Firebase app to prevent logging out the current user (e.g. the Syndic)
@@ -63,7 +64,7 @@ export const registerUser = async (
     block: extra?.block ?? '',
     phone: extra?.phone ?? '',
     photoURL: extra?.photoURL ?? '',
-    status: 'active',
+    status: extra?.status ?? 'active',
     createdAt: Date.now(),
   };
 

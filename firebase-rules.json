@@ -34,7 +34,7 @@
     "reservations": {
       ".read": "auth != null",
       "$reservationId": {
-        ".write": "auth != null"
+        ".write": "auth != null && root.child('users').child(auth.uid).child('status').val() === 'active'"
       }
     },
 
@@ -48,7 +48,7 @@
     "votings": {
       ".read": "auth != null",
       "$votingId": {
-        ".write": "auth != null"
+        ".write": "auth != null && root.child('users').child(auth.uid).child('status').val() === 'active'"
       }
     },
 

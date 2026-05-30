@@ -6,7 +6,7 @@ import {
 import Toast from 'react-native-toast-message';
 import { useAuth } from '../../context/AuthContext';
 import { registerUser } from '../../services/auth.service';
-import { updateUser, isUserCPFTaken, isUserEmailTaken, isApartmentTakenByOwner } from '../../services/users.service';
+import { updateUser, isUserCPFTaken, isUserEmailTaken, isApartmentTakenByOwner, countResidentsInApartment } from '../../services/users.service';
 import { getApartments, updateApartmentOccupancy } from '../../services/structure.service';
 import { UserProfile, UserRole, ResidentType, Apartment } from '../../types';
 import { Input } from '../../components/common/Input';
@@ -122,6 +122,18 @@ export const CreateEditUserScreen: React.FC<{ navigation: any; route: any }> = (
       if (role === 'resident' && apartmentId && residentType === 'owner') {
         const taken = await isApartmentTakenByOwner(apartmentId, existing?.uid);
         if (taken) e.apartmentId = 'Esta unidade já possui um proprietário registrado.';
+      }
+      
+      if (role === 'resident' && apartmentId && !e.apartmentId) {
+        const apt = apartments.find(a => a.id === apartmentId);
+        if (apt && apt.maxResidents) {
+          const currentCount = await countResidentsInApartment(apartmentId);
+          const isSameApartment = existing && existing.apartmentId === apartmentId;
+          const futureCount = isSameApartment ? currentCount : currentCount + 1;
+          if (futureCount > apt.maxResidents) {
+            e.apartmentId = `Limite de ${apt.maxResidents} moradores atingido para esta unidade.`;
+          }
+        }
       }
     } catch (dbError) {
       console.warn('Erro ao acessar o Realtime Database para validar duplicados:', dbError);

@@ -123,9 +123,32 @@ src/
 
 | Perfil | Acesso |
 | --- | --- |
-| Síndico | Dashboard completo, CRUD de tudo, aprovação de reservas |
-| Morador | Avisos, reservas, votações, visitantes, perfil |
-| Porteiro | Scanner QR, lista de visitantes, check-in/out |
+| Síndico | Dashboard completo, Gestão de Estruturas (Blocos/Unidades com limites de moradores), Aprovação de novos moradores, CRUD completo de usuários, Aprovação de reservas e gestão de porteiros/visitantes. |
+| Morador | Consulta de avisos, agendamento de reservas em espaços comuns, participação em votações ativas, cadastro de visitantes com geração de QR Code para entrada rápida. |
+| Porteiro | Leitura de QR Codes de visitantes para liberação de acesso (check-in/check-out) e consulta de listas de visitantes autorizados e moradores. |
+
+## 📱 Como o App Funciona (Principais Fluxos)
+
+O Síndico Digital foi projetado para digitalizar todas as rotinas burocráticas de um condomínio através de três fluxos principais baseados em papéis:
+
+1. **Gestão de Estruturas e Limite de Ocupação:**
+   - O Síndico cadastra os blocos e os apartamentos.
+   - Para cada apartamento, é possível definir um **limite máximo de moradores**.
+   - O sistema impede que a capacidade máxima de uma unidade seja ultrapassada, garantindo o controle real da ocupação do prédio.
+
+2. **Cadastro e Aprovação de Moradores:**
+   - Para garantir a segurança, os moradores que criam uma conta no aplicativo não têm acesso imediato aos dados do condomínio.
+   - O cadastro entra em **Pendente de Aprovação**. O morador visualiza apenas uma tela de bloqueio informando o status.
+   - O Síndico recebe a solicitação e analisa o cadastro na aba de "Aprovações Pendentes". Ao aprovar, o sistema verifica se há vagas na unidade. Se aprovado, o morador ganha acesso completo. Se rejeitado, o morador é impedido de entrar e pode ler o motivo da rejeição.
+
+3. **Controle de Portaria Inteligente (QR Code):**
+   - O morador, ao convidar um visitante ou aguardar uma entrega/serviço, cadastra a visita no seu aplicativo e gera um QR Code exclusivo.
+   - O visitante apresenta o QR Code na portaria.
+   - O Porteiro utiliza seu aplicativo para escanear o QR Code, validando a visita instantaneamente e registrando o horário de entrada (Check-in) e posterior saída (Check-out).
+
+4. **Comunicação e Votações:**
+   - O Síndico envia avisos importantes que aparecem no feed de todos os moradores (com alertas Push).
+   - Assembléias digitais permitem que o Síndico crie votações e os moradores votem pelo celular.
 
 ## 🔑 Notas importantes
 
